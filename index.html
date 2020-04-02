@@ -642,6 +642,7 @@ text-align: center;
                                        previousgm = stateofgmstock;
                                       },10000);
         window.setInterval(function(){
+            if(document.getElementById("game").style.display == "block"){
             var selectedcard = Math.round(Math.random()*7);
             alert(chancecards[selectedcard]);
             currenteffect = effectstomarket[selectedcard];
@@ -662,7 +663,7 @@ text-align: center;
         }
         else{
             
-        }}, Math.random() * 60000);
+        }}}, Math.random() * 60000);
     </script>
 </body>
 </html>
