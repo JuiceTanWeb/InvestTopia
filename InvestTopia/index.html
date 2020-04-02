@@ -1,0 +1,668 @@
+<!DoctypeHTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width"> 
+    <title>InvestTopia</title>
+    <style>
+        body{
+            background-color: darkseagreen;
+            cursor: url(resources/money.cur), auto;
+        }
+        button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+}
+        .button{
+            border-radius: 12px;
+            vertical-align: 
+        }
+        .button:hover{
+            transition: 0.3s;
+            background-color: indianred;
+        }
+    .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+text-align: center;
+}
+        #selectedcdlength{
+            background-color: indianred;
+        }
+        .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,255,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+    </style>
+</head>
+<body>
+    <div id = "titlescreen"><image src = "resources/logo.png" width = "500" class = "center"></image>
+        <br> <button class = "center button" onclick = "transitiontogame()">Play</button></div>
+    <div id = "selectscreen" style="display: none;">
+        <h1 class = "center" style = "font-family: monospace;">Select your seed money</h1>
+    <br><button onclick = "startgame(100000)" class = "center button">Level 1: $100,000 of investment money. Not too shabby!</button>
+    <br><button onclick = "startgame(50000)"class = "center button">Level 2: $50,000 of investment money. You have quite the income.</button>
+    <br><button onclick = "startgame(10000)"class = "center button">Level 3: $10,000 of investment money. You need to actually make the money back.</button>
+    <br><button onclick = "startgame(5000)"class = "center button">Level 4: $5,000 of investment money. You might need to cut corners if you lose this money.</button>
+    <br><button onclick = "startgame(1000)"class = "center button">Level 5: $1,000 of investment money. Your job doesn't pay you enough.</button></div>
+    <div id = "game" style = "display: none;">
+    <h1 class = "center">Today is month <span id = "month">0</span>.</h1>
+    <h1 class = "center">You have <span id = "cashonhand">0</span> dollars.</h1>
+    <div>
+        <br> <h1 class = "center">You have <span id = "savings">0</span> dollars in your savings account.</h1>
+        <br><p class = "center">You earn 1% interest per minute, paid every ten seconds.</p>
+        <button class = "center button" onclick = "savingsaccount()">Deposit savings</button> <button class = "center button" onclick = "withdrawsavings()">Withdraw savings</button>
+        </div>
+        <div>
+        <h1 class="center">CDs</h1>
+        <button class = "center button" onclick = "opencdselectionscreen()" id = "buycdbutton">Buy a CD.</button>
+        <button class = "center button" onclick = "sellcd()" id = "sellcdbutton" style = "display: none;">Sell a CD.</button>
+        <div id="cdmodal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="closecdselectionscreen()">&times;</span>
+    <p>Choose your CD type</p>
+    <br> $<input id = "cddollars" value="0" step="10" type="number">
+    <br>  You will earn <p id = "cdapy">0</p>% per year.
+    <br><button class = "button" onclick = "selectlength(this)" value = "1">6 month</button>
+      <button class = "button" onclick = "selectlength(this)" value = "2">1 year</button>
+      <button class = "button" onclick = "selectlength(this)" value = "6">3 year</button>
+      <br><button class = "center button" onclick = "createcd()">Create</button>
+  </div>
+
+</div>
+        <br><div class="center" id = "cd1"></div>
+        </div>
+        <div>
+        <h1 class = "center"> Index Fund </h1> 
+            <h1 id = "balanceinindex" class = "center"> 0 </h1>
+            <h1 id = "howmuchupordown" class="center">0% down.</h1>
+        <div id = "stockmarket">
+            <canvas id = "indexfund" class="center" width = "1500" height = "600"></canvas></div>
+       
+        <br><button class = "center button" onclick = "indexfund()">Invest in an index fund</button>
+        <br><button class = "center button" onclick = "sellindex()">Withdraw money from index fund</button></div>
+         <br><div id = "banana" style = "display: inline;"> <h1>Banana tech company</h1> <h1 class = "center">Tropical Post</h1> <h1 style = "float: right; display: inline">General Materials</h1><h1 id = "cashinbanana">$0</h1><h1 class = "center" id = "cashintropicalpost">$0</h1><h1 style = "float: right;" id = "cashingm">$0</h1>
+        <h1 id = "stateofbanana">0% down</h1><h1 class = "center" id = "stateoftropicalpost">0% up</h1><h1 style = "float: right; display: block;" id = "stateofgm">0% up.</h1>
+        <canvas id = "bananatechstockchart" width = "500" height = "600" style = "display: inline;"></canvas><canvas id = "tropicalpoststockchart"  class = "center" width = "500" height = "600" style = "display: inline;"></canvas> <canvas id = "gmstockchart"  style = "float: right;" width = "500" height = "600" style = "display: inline;" ></canvas>
+        <br><button class = "button" onclick = "bananafund()">Buy Stock</button>  <button class = "button center" onclick = "tropicalfund()">Buy Stock</button>  <button class = "button" style = "float: right;" onclick= "gmfund()">Buy Stock</button>
+                <br><button class = "button" onclick = "sellbanana()">Sell Stock</button><button class = "button center" onclick = "selltropical()">Sell Stock</button><button class = "button" style="float: right;" onclick = "sellgm()">Sell Stock</button>
+
+        </div>
+        
+        
+       
+                
+
+        </div>
+    <script>
+    var money = 0;
+        var timesincestart = 0;
+        var savings = 0;
+        var cdlength = 0;
+        var stateofthemarket = 1;
+        var dollarsincd = 0;
+        var cdinterest = 0;
+        var historyofstockmarket = [1];
+        var sellornottosellcd;
+        var monthsremainingincd;
+        var indexfundbalance = 0;
+        var previousstateofmarket = 1;
+        var i;
+        var chancecards = ["Virus causes sales to drop. Market down 15%.", "Bull market after new president is elected. Market up 10%.", "Taxes. Pay 20% of your cash on hand, as well as in your index fund.", "Banana stock goes bankrupt: Lose all stock.", "Big tech grows, Banana stock increases by 30%", "Banks decreases loan interest, Market up 10%", "People decrease spending as wages go down, Market down 5%", "New jobs created by Monopoly, Co stimulates economy, Market up 7%."];
+        var effectstomarket = [0.85, 1.1, 1 ,1 ,1, 1.1, 0.95, 1.07];
+        var currenteffect = 1;
+        var moneyinbanana = 0;
+        var historyofbananastock = [1];
+        var stateofbananastock = 1;
+        var moneyintropical = 0;
+        var stateoftropicalstock = 1;
+        var historyoftropicalstock = [1];
+        var moneyingm = 0;
+        var stateofgmstock = 1;
+        var historyofgmstock = [1];
+        var previousbanana = 1;
+        var previoustropical = 1;
+        var previousgm = 1;
+        var indexfundchart = document.getElementById("indexfund");
+        const stockmarketdrawingsurface = indexfundchart.getContext("2d");
+         var bananatechelement = document.getElementById("bananatechstockchart");
+        const bananatechchart = bananatechelement.getContext("2d");
+         var tropicalpostelement = document.getElementById("tropicalpoststockchart");
+        const tropicalpostchart = tropicalpostelement.getContext("2d");
+         var generalmaterialselement = document.getElementById("gmstockchart");
+        const generalmaterialschart = generalmaterialselement.getContext("2d");
+    function transitiontogame(){
+        document.getElementById("titlescreen").style.display = "none";
+        document.getElementById("selectscreen").style.display = "block";
+
+    }
+    function startgame(cash){
+        money = cash;
+        document.getElementById("selectscreen").style.display = "none";
+        document.getElementById("game").style.display = "block";
+        document.getElementById("cashonhand").innerHTML = money;
+
+    }
+    function opencdselectionscreen(){
+        document.getElementById("cdmodal").style.display = "block";
+        document.getElementById("cdapy").innerHTML = Math.round(stateofthemarket * 3 * 100)/100;
+    }
+    function closecdselectionscreen(){
+        document.getElementById("cdmodal").style.display = "none";
+    }
+    function selectlength(length){
+        if (document.getElementById("selectedcdlength") != null){
+            document.getElementById("selectedcdlength").id = null;
+        }
+        length.id = "selectedcdlength";
+        if (length.value == 1){
+            document.getElementById("cdapy").innerHTML = Math.round(stateofthemarket * 3 * 100)/100;}
+        else if (length.value == 2){
+            document.getElementById("cdapy").innerHTML = Math.round(stateofthemarket * 3 * 100)/100 + 1;
+        }
+        else{
+            document.getElementById("cdapy").innerHTML = Math.round(stateofthemarket * 3 * 100)/100 + 1.5;
+        }
+    }
+    function savingsaccount(){ //Savings account deposit
+        var howmuchtoaddtosavings = prompt("How much do you want to invest?", 0);
+        if (isNaN(Number(howmuchtoaddtosavings))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtoaddtosavings > money){
+                alert("You don't have enough cash!");
+            }
+            else{
+            savings = savings + Number(howmuchtoaddtosavings);
+            money = money - Number(howmuchtoaddtosavings);
+          document.getElementById("savings").innerHTML = savings;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+    }
+        function withdrawsavings(){
+             var howmuchtowithdrawfromsavings = prompt("How much do you want to withdraw?", 0);
+        if (isNaN(Number(howmuchtowithdrawfromsavings))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtowithdrawfromsavings > savings){
+                alert("You don't have enough savings!")
+            }
+            else{
+            savings = savings - Number(howmuchtowithdrawfromsavings);
+            money = money + Number(howmuchtowithdrawfromsavings);
+          document.getElementById("savings").innerHTML = savings;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+        }
+        function createcd(){
+            if (document.getElementById("selectedcdlength") != null){
+                if (document.getElementById("cddollars").value <= money){
+                    money = money - document.getElementById("cddollars").value;
+                    document.getElementById("cashonhand").innerHTML = money;
+                document.getElementById("cdmodal").style.display = "none";
+                dollarsincd = document.getElementById("cddollars").value;
+                if (document.getElementById("selectedcdlength").value == 1){
+            cdinterest = stateofthemarket * 3;}
+        else if (document.getElementById("selectedcdlength").value == 2){
+            cdinterest = stateofthemarket * 3 + 1;
+        }
+        else{
+            cdinterest = stateofthemarket * 3 + 1.5;
+        }
+                cdlength = document.getElementById("selectedcdlength").value;
+                monthsremainingincd = cdlength * 6;
+                document.getElementById("cd1").innerHTML = "$ " + dollarsincd + " making "  + Math.round(cdinterest * 100) / 100 + "% per year for " + cdlength / 2 + " years. " + monthsremainingincd + " months left."; 
+                document.getElementById("buycdbutton").style.display = "none";
+                document.getElementById("sellcdbutton").style.display = "block";
+    
+                }
+                else{
+                    alert("You don't have enough cash!");
+                }
+            }
+                else{
+                    alert('Select your length of CD first.')
+                }
+        }
+        function shuffle(array) { //shuffle algorithm
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }}
+
+            function sellcd(){
+                if (monthsremainingincd <= 0){
+                    var sellornottosellcd = confirm("Are you sure you want to withdraw your cd? You will get " + Math.round(dollarsincd * (1 + (cdinterest * cdlength/2)/100) * 100)/100 + " dollars.");
+                    if (sellornottosellcd){
+                        money = money + Math.round(dollarsincd * (1 + (cdinterest * cdlength/2)/100) * 100)/100;
+                        document.getElementById("cashonhand").innerHTML = money;
+                        dollarsincd = 0;
+                        cdinterest = 0;
+                        cdlength = 0;
+                        monthsremainingincd = 0;
+                        document.getElementById("buycdbutton").style.display = "block";
+                document.getElementById("sellcdbutton").style.display = "none";
+
+                    }
+                }
+                else{
+                    sellornottosellcd = null;
+                     sellornottosellcd = confirm("Are you sure you want to withdraw your cd? After the early withdrawal penalty fee, you will get " + Math.round((dollarsincd * (1 + (cdinterest * (cdlength/2 - monthsremainingincd / 12))/100)) * 0.9 * 100)/100 + " dollars.");
+                      if (sellornottosellcd){
+                        money = money + Math.round((dollarsincd * (1 + (cdinterest * (cdlength/2 - monthsremainingincd / 12))/100)) * 0.9 * 100)/100;
+                        document.getElementById("cashonhand").innerHTML = money;
+                        dollarsincd = 0;
+                        cdinterest = 0;
+                        cdlength = 0;
+                        monthsremainingincd = 0;
+                       document.getElementById("buycdbutton").style.display = "block";
+                document.getElementById("sellcdbutton").style.display = "none";
+                    }
+                    
+                }
+            }
+        function sellindex(){
+            var howmuchtosubtract = prompt("How much do you want to withdraw?", 0);
+        if (isNaN(Number(howmuchtosubtract))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtosubtract > money){
+                money = money + indexfundbalance;
+                indexfundbalance = 0;
+                 document.getElementById("balanceinindex").innerHTML = "$" + indexfundbalance;
+        document.getElementById("cashonhand").innerHTML = money;
+                
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            indexfundbalance = indexfundbalance - Number(howmuchtosubtract);
+            money = money + Number(howmuchtosubtract);
+          document.getElementById("balanceinindex").innerHTML = "$" + indexfundbalance;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}}
+        function indexfund(){
+             var howmuchtoaddtoindexfund = prompt("How much do you want to invest?", 0);
+        if (isNaN(Number(howmuchtoaddtoindexfund))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtoaddtoindexfund > money){
+                alert("You don't have enough cash!");
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            indexfundbalance = indexfundbalance + Number(howmuchtoaddtoindexfund);
+            money = money + Number(howmuchtoaddtoindexfund);
+          document.getElementById("balanceinindex").innerHTML = "$" + indexfundbalance;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+        }
+         function bananafund(){
+             var howmuchtoaddtoindexfund = prompt("How much do you want to invest?", 0);
+        if (isNaN(Number(howmuchtoaddtoindexfund))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtoaddtoindexfund > money){
+                alert("You don't have enough cash!");
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyinbanana = moneyinbanana + Number(howmuchtoaddtoindexfund);
+            money = money - Number(howmuchtoaddtoindexfund);
+          document.getElementById("cashinbanana").innerHTML = "$" + bananafund;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+        }
+        function sellbanana(){
+            var howmuchtosubtract = prompt("How much do you want to withdraw?", 0);
+        if (isNaN(Number(howmuchtosubtract))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtosubtract > money){
+                money = money + moneyinbanana;
+                moneyinbanana = 0;
+                 document.getElementById("cashinbanana").innerHTML = "$" + moneyinbanana;
+        document.getElementById("cashonhand").innerHTML = money;
+                
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyinbanana = moneyinbanana - Number(howmuchtosubtract);
+            money = money + Number(howmuchtosubtract);
+          document.getElementById("cashinbanana").innerHTML = "$" + moneyinbanana;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}}
+        function tropicalfund(){
+             var howmuchtoaddtoindexfund = prompt("How much do you want to invest?", 0);
+        if (isNaN(Number(howmuchtoaddtoindexfund))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtoaddtoindexfund > money){
+                alert("You don't have enough cash!");
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyintropical = moneyintropical + Number(howmuchtoaddtoindexfund);
+            money = money - Number(howmuchtoaddtoindexfund);
+          document.getElementById("cashintropicalpost").innerHTML = "$" + moneyintropical;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+        }
+        function selltropical(){
+            var howmuchtosubtract = prompt("How much do you want to withdraw?", 0);
+        if (isNaN(Number(howmuchtosubtract))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtosubtract > money){
+                money = money + moneyintropical;
+                moneyintropical = 0;
+                 document.getElementById("cashintropicalpost").innerHTML = "$" + moneyintropical;
+        document.getElementById("cashonhand").innerHTML = money;
+                
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyintropical = moneyintropical - Number(howmuchtosubtract);
+            money = money + Number(howmuchtosubtract);
+          document.getElementById("cashintropicalpost").innerHTML = "$" + moneyintropical;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}}
+        function gmfund(){
+             var howmuchtoaddtoindexfund = prompt("How much do you want to invest?", 0);
+        if (isNaN(Number(howmuchtoaddtoindexfund))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtoaddtoindexfund > money){
+                alert("You don't have enough cash!");
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyingm = moneyingm + Number(howmuchtoaddtoindexfund);
+            money = money - Number(howmuchtoaddtoindexfund);
+          document.getElementById("cashingm").innerHTML = "$" + moneyingm;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}
+        }
+        function sellgm(){
+            var howmuchtosubtract = prompt("How much do you want to withdraw?", 0);
+        if (isNaN(Number(howmuchtosubtract))){
+            alert("Do not add commas. Just add the number.");
+        }
+        else{
+            if (howmuchtosubtract > money){
+                money = money + moneyingm;
+                moneyingm = 0;
+                 document.getElementById("cashingm").innerHTML = "$" + moneyingm;
+        document.getElementById("cashonhand").innerHTML = money;
+                
+            }
+            else{
+                previousstateofmarket = stateofthemarket;
+            moneyingm = moneyingm - Number(howmuchtosubtract);
+            money = money + Number(howmuchtosubtract);
+          document.getElementById("moneyingm").innerHTML = "$" + moneyingm;
+        document.getElementById("cashonhand").innerHTML = money;
+        }}}
+        window.setInterval(function() {savings = (Math.round(100*(savings * 1.00166666667)) / 100); 
+                                       /*Rounding: Multiply by 100, round and divide by 100 to get the number rounded to the nearest hundredth. Yearly gain is 1%, so we get 1/6% per cycle.*/
+                                       timesincestart = timesincestart + 2;
+                                       document.getElementById('month').innerHTML = timesincestart;
+                                      document.getElementById("savings").innerHTML = savings;
+                                    stateofthemarket = stateofthemarket + ((Math.random()/4) - 0.125) * currenteffect;
+                                       stateofbananastock = stateofthemarket + ((Math.random()/8) - 0.0625);
+                                        stateofgmstock = stateofthemarket + ((Math.random()/8) - 0.0625); 
+                                       stateoftropicalstock = stateofthemarket + ((Math.random()/8) - 0.0625);
+                                       if (historyofstockmarket.length > 9){
+                                           historyofstockmarket.splice(0,1);
+                                           historyofstockmarket.push(stateofthemarket);
+                                       }
+                                       else{
+                                           historyofstockmarket.push(stateofthemarket);
+                                       }
+                                       if (historyofbananastock.length > 9){
+                                           historyofbananastock.splice(0,1);
+                                           historyofbananastock.push(stateofthemarket);
+                                       }
+                                       else{
+                                           historyofbananastock.push(stateofthemarket);
+                                       }
+                                       if (historyoftropicalstock.length > 9){
+                                           historyoftropicalstock.splice(0,1);
+                                           historyoftropicalstock.push(stateofthemarket);
+                                       }
+                                       else{
+                                           historyoftropicalstock.push(stateofthemarket);
+                                       }
+                                       if (historyofgmstock.length > 9){
+                                           historyofgmstock.splice(0,1);
+                                           historyofgmstock.push(stateofthemarket);
+                                       }
+                                       else{
+                                           historyofgmstock.push(stateofthemarket);
+                                       }
+                                       if (monthsremainingincd > 0 ){
+                                           monthsremainingincd = monthsremainingincd - 2;
+                                           document.getElementById("cd1").innerHTML = "$ " + dollarsincd + " making "  + Math.round(cdinterest * 100) / 100 + "% per year for " + cdlength / 2 + " years. " + monthsremainingincd + " months left."
+                                    }
+                                       else if (cdlength > 0){
+                                           document.getElementById("cd1").innerHTML = "$ " + Math.round(dollarsincd * (1 + (cdinterest * cdlength/2)/100) * 100)/100 + " is ready for you to withdraw."
+                                       }
+                                       else{
+                                           document.getElementById("cd1").innerHTML = null;
+                                       }
+                                   stockmarketdrawingsurface.clearRect(0, 0, indexfundchart.width, indexfundchart.height);
+                                       bananatechchart.clearRect(0, 0, indexfundchart.width, indexfundchart.height);
+                                       tropicalpostchart.clearRect(0, 0, indexfundchart.width, indexfundchart.height);
+                                       generalmaterialschart.clearRect(0, 0, indexfundchart.width, indexfundchart.height);
+                                       stockmarketdrawingsurface.font = "30px Times New Roman"
+                                       stockmarketdrawingsurface.lineWidth = 5;
+                                       stockmarketdrawingsurface.lineCap = "round";
+                                       bananatechchart.lineWidth = 5;
+                                       bananatechchart.lineCap = "round";
+                                       tropicalpostchart.lineWidth = 5;
+                                       tropicalpostchart.lineCap = "round";
+                                       generalmaterialschart.lineWidth = 5;
+                                       generalmaterialschart.lineCap = "round";
+                                       if (stateofthemarket >= historyofstockmarket[historyofstockmarket.length - 2]){
+                                           stockmarketdrawingsurface.fillStyle = "#000000";
+                                           stockmarketdrawingsurface.fillText((stateofthemarket / historyofstockmarket[historyofstockmarket.length - 2] - 1)* 100 + "% up.", 750, 300  );
+                                           document.getElementById("howmuchupordown").innerHTML = (stateofthemarket / historyofstockmarket[historyofstockmarket.length - 2] - 1)* 100 + "% up.";
+                                           stockmarketdrawingsurface.stroke();
+                                           stockmarketdrawingsurface.fillStyle = "#04e063";
+                                           
+                                       }
+                                       else{
+                                           stockmarketdrawingsurface.fillStyle = "#000000";
+                                           stockmarketdrawingsurface.fillText(1-(stateofthemarket / historyofstockmarket[historyofstockmarket.length - 2] - 1)* 100 + "% down.", 750, 300  );
+                                           stockmarketdrawingsurface.stroke();
+                                           document.getElementById("howmuchupordown").innerHTML = 1-(stateofthemarket / historyofstockmarket[historyofstockmarket.length - 2] - 1)* 100 + "% down.";
+                                           stockmarketdrawingsurface.fillStyle = "#ce0b08";
+                                       }
+                                       stockmarketdrawingsurface.beginPath();
+                                       stockmarketdrawingsurface.fillRect(0,0,1500,600);
+                                       stockmarketdrawingsurface.stroke();
+                                       for (i = 0; i < historyofstockmarket.length; i++ ){
+                                           stockmarketdrawingsurface.beginPath();
+                                        stockmarketdrawingsurface.moveTo(i * 150, Math.abs(historyofstockmarket[i-1] * 200 - 600));
+                                        stockmarketdrawingsurface.lineTo((i * 150) + 150, Math.abs(historyofstockmarket[i] * 200 - 600));
+                                           stockmarketdrawingsurface.stroke();
+                    
+                                       }
+                                       indexfundbalance = Math.round(indexfundbalance * (stateofthemarket / previousstateofmarket)); 
+                                       document.getElementById("balanceinindex").innerHTML = "$" + indexfundbalance;
+                                        document.getElementById("cashonhand").innerHTML = money;
+                                       if (stateofbananastock >= historyofbananastock[historyofbananastock.length - 2]){
+                                           bananatechchart.fillStyle = "#000000";
+                                           bananatechchart.fillText((stateofbananastock / historyofbananastock[historyofbananastock.length - 2] - 1)* 100 + "% up.", 750, 300);
+                                           document.getElementById("stateofbanana").innerHTML = (stateofbananastock / historyofbananastock[historyofbananastock.length - 2] - 1)* 100 + "% up.";
+                                           bananatechchart.stroke();
+                                           bananatechchart.fillStyle = "#04e063";
+                                           
+                                       }
+                                       else{
+                                           bananatechchart.fillStyle = "#000000";
+                                           bananatechchart.fillText(1-(stateofbananastock / historyofbananastock[historyofbananastock.length - 2] - 1)* 100 + "% down.", 750, 300);
+                                           bananatechchart.stroke();
+                                           document.getElementById("stateofbanana").innerHTML = 1-(stateofbananastock / historyofbananastock[historyofbananastock.length - 2] - 1)* 100 + "% down.";
+                                           bananatechchart.fillStyle = "#ce0b08";
+                                       }
+                                       bananatechchart.beginPath();
+                                       bananatechchart.fillRect(0,0,500,600);
+                                       bananatechchart.stroke();
+                                       for (i = 0; i < historyofbananastock.length; i++ ){
+                                           bananatechchart.beginPath();
+                                        bananatechchart.moveTo(i * 50, Math.abs(historyofbananastock[i-1] * 200 - 600));
+                                        bananatechchart.lineTo((i * 50) + 50, Math.abs(historyofbananastock[i] * 200 - 600));
+                                           bananatechchart.stroke();
+                    
+                                       }
+                                       moneyinbanana = Math.round(moneyinbanana * (stateofbananastock / previousbanana)); 
+                                       document.getElementById("cashinbanana").innerHTML = "$" + moneyinbanana;
+                                        document.getElementById("cashonhand").innerHTML = money;
+                                       if (stateoftropicalstock >= historyoftropicalstock[historyoftropicalstock.length - 2]){
+                                           tropicalpostchart.fillStyle = "#000000";
+                                           tropicalpostchart.fillText((stateofbananastock / historyoftropicalstock[historyoftropicalstock.length - 2] - 1)* 100 + "% up.", 750, 300);
+                                           document.getElementById("stateoftropicalpost").innerHTML = (stateoftropicalstock / historyoftropicalstock[historyoftropicalstock.length - 2] - 1)* 100 + "% up.";
+                                           tropicalpostchart.stroke();
+                                           tropicalpostchart.fillStyle = "#04e063";
+                                           
+                                       }
+                                       else{
+                                           tropicalpostchart.fillStyle = "#000000";
+                                           tropicalpostchart.fillText(1-(stateofbananastock / historyoftropicalstock[historyoftropicalstock.length - 2] - 1)* 100 + "% down.", 750, 300);
+                                           tropicalpostchart.stroke();
+                                           document.getElementById("stateoftropicalpost").innerHTML = 1-(stateoftropicalstock / historyoftropicalstock[historyoftropicalstock.length - 2] - 1)* 100 + "% down.";
+                                           tropicalpostchart.fillStyle = "#ce0b08";
+                                       }
+                                       tropicalpostchart.beginPath();
+                                       tropicalpostchart.fillRect(0,0,500,600);
+                                       tropicalpostchart.stroke();
+                                       for (i = 0; i < historyoftropicalstock.length; i++ ){
+                                           tropicalpostchart.beginPath();
+                                        tropicalpostchart.moveTo(i * 50, Math.abs(historyoftropicalstock[i-1] * 200 - 600));
+                                        tropicalpostchart.lineTo((i * 50) + 50, Math.abs(historyoftropicalstock[i] * 200 - 600));
+                                           tropicalpostchart.stroke();
+                    
+                                       }
+                                       if (stateofgmstock >= historyofgmstock[historyofgmstock.length - 2]){
+                                           generalmaterialschart.fillStyle = "#000000";
+                                           generalmaterialschart.fillText((stateofgmstock / historyofgmstock[historyofgmstock.length - 2] - 1)* 100 + "% up.", 750, 300);
+                                           document.getElementById("stateofgm").innerHTML = (stateofgmstock / historyofgmstock[historyofgmstock.length - 2] - 1)* 100 + "% up.";
+                                           generalmaterialschart.stroke();
+                                           generalmaterialschart.fillStyle = "#04e063";
+                                           
+                                       }
+                                       else{
+                                           generalmaterialschart.fillStyle = "#000000";
+                                           generalmaterialschart.fillText(1-(stateofgmstock / historyofgmstock[historyofgmstock.length - 2] - 1)* 100 + "% down.", 750, 300);
+                                           generalmaterialschart.stroke();
+                                           document.getElementById("stateofgm").innerHTML = 1-(stateofgmstock / historyofgmstock[historyofgmstock.length - 2] - 1)* 100 + "% down.";
+                                           generalmaterialschart.fillStyle = "#ce0b08";
+                                       }
+                                       generalmaterialschart.beginPath();
+                                       generalmaterialschart.fillRect(0,0,500,600);
+                                       generalmaterialschart.stroke();
+                                       for (i = 0; i < historyofgmstock.length; i++ ){
+                                           generalmaterialschart.beginPath();
+                                        generalmaterialschart.moveTo(i * 50, Math.abs(historyofgmstock[i-1] * 200 - 600));
+                                        generalmaterialschart.lineTo((i * 50) + 50, Math.abs(historyofgmstock[i] * 200 - 600));
+                                           generalmaterialschart.stroke();
+                    
+                                       }
+                                       moneyingm = Math.round(moneyingm * (stateofgmstock / previousgm)); 
+                                       moneyintropical = Math.round(moneyintropical * (stateoftropicalstock / previoustropical)); 
+                                       document.getElementById("cashingm").innerHTML = "$" + moneyingm;
+                                       document.getElementById("cashintropicalpost").innerHTML = "$" + moneyintropical;
+                                        document.getElementById("cashonhand").innerHTML = money;
+                                       
+                                       previousstateofmarket = stateofthemarket;
+                                       previousbanana = stateofbananastock;
+                                       previoustropical = stateoftropicalstock;
+                                       previousgm = stateofgmstock;
+                                      },10000);
+        window.setInterval(function(){
+            var selectedcard = Math.round(Math.random()*7);
+            alert(chancecards[selectedcard]);
+            currenteffect = effectstomarket[selectedcard];
+            if(selectedcard == 2){
+                money = money * 0.8;
+                document.getElementById("cashonhand").innerHTML = money;
+                indexfundbalance = indexfundbalance * 0.8;
+                document.getElementById("balanceinindex").innerHTML = "$" + indexfundbalance;
+                                        
+        }
+        else if (selectedcard == 3){
+            moneyinbanana = 0;
+             document.getElementById("cashinbanana").innerHTML = "$" + moneyinbanana;
+        }
+        else if(selectedcard == 4){
+            moneyinbanana = moneyinbanana * 1.3;
+            document.getElementById("cashinbanana").innerHTML = "$" + moneyinbanana;
+        }
+        else{
+            
+        }}, Math.random() * 60000);
+    </script>
+</body>
+</html>
